@@ -59,6 +59,8 @@ Here's an updated quick reference guide:
 
 - [Vue & Nuxt questions ](./Vue & Nuxt Js InterView Questions.md).
 
+- [General mcq questions react-angular-node-DBS-OOP](./Technical Interview MCQ.md).
+
 # Vue 3 and Nuxt 3 InterView Preparation Guide
 
 # 

@@ -1673,7 +1673,7 @@ npx nuxi generate
 
 ### 21. **`useAsyncData` vs `useFetch`**
 
-- `useFetch`: Fetches data **only on client-side**.  
+- [`]()useFetch`: Fetches data **only on client-side**.  
 - `useAsyncData`: Works on **both server and client**.
 
 ---

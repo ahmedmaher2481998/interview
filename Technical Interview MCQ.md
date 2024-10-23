@@ -405,10 +405,6 @@
 49. What is the same-origin policy?
     a) A security concept that restricts how documents/
 
-
-
-
-
 # Technical Interview Multiple Choice Questions - Part 2
 
 ## Advanced JavaScript Concepts
@@ -836,12 +832,6 @@
      d) Copying functions
      Answer: a) Limiting function calls
      Explanation: Debouncing limits how often a function can be called
-
-
-
-
-
-
 
 # Technical Interview Multiple Choice Questions - Part 3
 
@@ -1276,7 +1266,3 @@
      d) Server cache
      Answer: a) Storage for offline resources
      Explanation: Cache storage enables storing resources for offline use
-
-
-
-
