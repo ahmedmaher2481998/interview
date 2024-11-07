@@ -30,9 +30,9 @@ Here's an updated quick reference guide:
    - Provide an example of collaboration and conflict resolution.
    - Yes, I’ve worked in both small and large teams. A great example is during the Noor-Orsod project. I collaborated closely with both backend and frontend developers to troubleshoot issues and ensure smooth integration with Firebase and Oracle Cloud. At one point, we faced a conflict regarding deployment timelines. I facilitated a quick meeting to align expectations, which resulted in splitting tasks and adjusting priorities. This ensured we met the client's timeline without sacrificing code quality. I value clear communication and flexibility in teamwork
 
-6. **Why do you want to work for Salem Ventures?**
+6. **Why do you want to work for 0000?**
    
-   - I’m particularly excited about the opportunity at Salem Ventures because of your focus on leveraging technology to optimize asset management. My technical background in full-stack development aligns perfectly with your mission, and I am eager to contribute to building scalable tools that enhance investor experiences. I also see this role as a great opportunity to apply both my technical expertise and problem-solving abilities to meaningful projects that have a direct impact on wealth management. I admire Salem Ventures’ emphasis on technology-first solutions and believe my skills and ambitions are a great fit
+   - I’m particularly excited about the opportunity at 00 because of your focus on leveraging technology to optimize asset management. My technical background in full-stack development aligns perfectly with your mission, and I am eager to contribute to building scalable tools that enhance investor experiences. I also see this role as a great opportunity to apply both my technical expertise and problem-solving abilities to meaningful projects that have a direct impact on ****. I admire 0000’ emphasis on technology-first solutions and believe my skills and ambitions are a great fit
 - general SWE interview questions video 
   
   - what problem you faced in a project before 
