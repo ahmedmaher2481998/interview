@@ -96,27 +96,393 @@ Tips for Preparation:
 
 
 ## Patch  1
+### **Redis Questions**
 
-1. Redis (Mid Level):
-- What is Redis and what are its primary use cases?
-- Explain Redis persistence options: RDB vs AOF
-- How does Redis handle data eviction policies?
-- What are Redis data types and when would you use each?
-- How would you implement session management using Redis?
+#### **1. What is Redis and what are its primary use cases?**  
+**Answer:**  
+Redis is an open-source, in-memory key-value data store known for its high performance and versatility. It supports various data structures and is often used as:  
+- **Cache:** Store frequently accessed data.  
+- **Session Store:** Manage user sessions.  
+- **Message Broker:** Implement pub/sub or queues.  
+- **Analytics:** Fast data aggregation and leaderboard maintenance.
 
-2. SQL/PostgreSQL/MySQL (Mixed Levels):
-- (Advanced) Explain the difference between INNER JOIN, LEFT JOIN, RIGHT JOIN, and FULL OUTER JOIN with examples
-- (Advanced) How would you optimize a slow-performing SQL query?
-- (Mid) Explain the concept of database normalization and its forms
-- (Beginner) What is the difference between WHERE and HAVING clauses?
-- (Advanced) How do you handle deadlocks in a database system?
+---
 
-3. NodeJS (Mid-Advanced):
-- Explain the Event Loop in Node.js
-- How does Node.js handle child processes?
-- What are Streams in Node.js and how do they work?
-- Explain the difference between process.nextTick() and setImmediate()
-- How does clustering work in Node.js?
+#### **2. Explain Redis persistence options: RDB vs AOF**  
+**Answer:**  
+Redis provides two persistence options:  
+- **RDB (Redis Database File):**  
+  - Saves a snapshot of data at intervals.  
+  - Fast recovery but may lose recent writes.  
+  - Suitable for backups.  
+
+- **AOF (Append-Only File):**  
+  - Logs every write operation.  
+  - Slower but ensures minimal data loss.  
+  - Suitable for write-heavy use cases.
+
+**Combined Usage:**  
+Use **RDB for backups** and **AOF for durability**.
+
+---
+
+#### **3. How does Redis handle data eviction policies?**  
+**Answer:**  
+Redis uses eviction policies to manage memory when the max memory limit is reached. Policies include:  
+- **noeviction:** Returns errors when memory is full.  
+- **allkeys-lru:** Evicts least recently used (LRU) keys.  
+- **volatile-lru:** Evicts LRU keys with expiration set.  
+- **allkeys-random:** Evicts random keys.  
+- **volatile-ttl:** Evicts keys with the shortest time-to-live (TTL).  
+
+Eviction is configured via `maxmemory-policy` in the Redis config.
+
+---
+
+#### **4. What are Redis data types and when would you use each?**  
+**Answer:**  
+
+| **Data Type** | **Description**                      | **Use Case**                                    |
+|---------------|--------------------------------------|------------------------------------------------|
+| **String**    | Binary-safe value (e.g., string, int)| Caching user data or counters (`INCR`).        |
+| **Hash**      | Key-value pair map                  | Storing user profiles.                         |
+| **List**      | Ordered list of strings             | Queues or message processing.                  |
+| **Set**       | Unique unordered collection         | Tags or unique IDs.                            |
+| **Sorted Set**| Set with scores for ranking         | Leaderboards or priority queues.               |
+| **Stream**    | Append-only log structure           | Event streaming.                               |
+| **Bitmap**    | Bit-level operations on strings     | Tracking user activity (bit flags).            |
+| **HyperLogLog**| Approximation for unique counts    | Counting unique visitors.                      |
+
+---
+
+#### **5. How would you implement session management using Redis?**  
+**Answer:**  
+Redis is commonly used to store session data due to its speed and TTL support.
+
+**Steps:**  
+1. **Store Session:**  
+   Save session data as a Redis key-value pair where the session ID is the key.  
+   ```javascript
+   const sessionId = 'user123-session';
+   redisClient.set(sessionId, JSON.stringify(userData), 'EX', 3600); // Expire in 1 hour
+   ```
+
+2. **Retrieve Session:**  
+   Validate the session ID on each request.  
+   ```javascript
+   redisClient.get(sessionId, (err, data) => {
+     if (data) {
+       console.log(JSON.parse(data)); // Use session data
+     } else {
+       console.log('Session expired or invalid');
+     }
+   });
+   ```
+
+3. **Delete Session:**  
+   Invalidate a session during logout.  
+   ```javascript
+   redisClient.del(sessionId);
+   ```
+
+---
+
+#### **Diagram: Session Management Using Redis**  
+```plaintext
++-------------+          +-----------+           +-----------+
+|   Browser   |          |   Server  |           |   Redis    |
+|             |   Set    |  Validate |  Get/Set  |   Store    |
+| Session ID  |--------->|  Session  |<--------->|  Session   |
+| in Cookie   |          |  Data     |           |  Data      |
++-------------+          +-----------+           +-----------+
+```
+
+Redis's **fast lookups** and **expiration policies** make it ideal for session management. Would you like a deeper dive into any specific Redis feature?
+
+---
+
+
+  
+### **SQL/PostgreSQL/MySQL Questions**
+
+---
+
+#### **1. Explain the difference between INNER JOIN, LEFT JOIN, RIGHT JOIN, and FULL OUTER JOIN with examples**  
+**Answer:**  
+
+| **Join Type**         | **Description**                                           | **Example Output**                       |
+|------------------------|-----------------------------------------------------------|------------------------------------------|
+| **INNER JOIN**         | Matches rows in both tables based on a condition.         | Common rows only.                        |
+| **LEFT JOIN**          | All rows from the left table, plus matched rows from the right. | NULL for unmatched rows in the right.   |
+| **RIGHT JOIN**         | All rows from the right table, plus matched rows from the left. | NULL for unmatched rows in the left.    |
+| **FULL OUTER JOIN**    | All rows from both tables, matched or not.                | NULL for unmatched rows on either side. |
+
+**Example:**  
+Consider `Users` and `Orders` tables.
+
+**Tables:**  
+`Users`  
+| id | name   |  
+|----|--------|  
+| 1  | Alice  |  
+| 2  | Bob    |  
+| 3  | Carol  |  
+
+`Orders`  
+| id | user_id | product  |  
+|----|---------|----------|  
+| 1  | 1       | Laptop   |  
+| 2  | 3       | Phone    |  
+
+**SQL Queries:**  
+- **INNER JOIN:** `SELECT * FROM Users u INNER JOIN Orders o ON u.id = o.user_id;`  
+  **Output:** Alice, Laptop; Carol, Phone.  
+
+- **LEFT JOIN:** `SELECT * FROM Users u LEFT JOIN Orders o ON u.id = o.user_id;`  
+  **Output:** Alice, Laptop; Bob, NULL; Carol, Phone.  
+
+- **RIGHT JOIN:** `SELECT * FROM Users u RIGHT JOIN Orders o ON u.id = o.user_id;`  
+  **Output:** Alice, Laptop; Carol, Phone.  
+
+- **FULL OUTER JOIN:** `SELECT * FROM Users u FULL OUTER JOIN Orders o ON u.id = o.user_id;`  
+  **Output:** Alice, Laptop; Bob, NULL; Carol, Phone.
+
+---
+
+#### **2. How would you optimize a slow-performing SQL query?**  
+**Answer:**  
+- **Indexing:** Ensure columns in WHERE, JOIN, and ORDER BY are indexed.  
+- **Query Rewrite:** Avoid SELECT *; only fetch required columns.  
+- **Analyze Execution Plan:** Use `EXPLAIN` or `EXPLAIN ANALYZE`.  
+- **Partitioning:** Split large tables to reduce scanning time.  
+- **Caching:** Cache frequent queries.  
+- **Avoid Complex Joins/Subqueries:** Use common table expressions (CTEs) if needed.  
+- **Optimize Index Usage:** Consider covering indexes or composite indexes.  
+- **Limit Rows:** Use `LIMIT` for paginated queries.  
+
+---
+
+#### **3. Explain the concept of database normalization and its forms**  
+**Answer:**  
+Normalization organizes data to reduce redundancy and improve consistency.
+
+| **Form**          | **Rule**                                                                 |
+|--------------------|--------------------------------------------------------------------------|
+| **1NF**           | Data is atomic (no repeating groups).                                    |
+| **2NF**           | 1NF + no partial dependency on primary keys.                             |
+| **3NF**           | 2NF + no transitive dependencies.                                        |
+| **BCNF**          | Every determinant is a candidate key.                                    |
+
+**Example:**  
+
+| **Non-Normalized Table** |  
+| product_id | product_name | supplier_id | supplier_name |  
+|------------|--------------|-------------|---------------|  
+| 1          | Laptop       | 100         | TechSupply    |  
+
+**3NF Table:**  
+- **Products:** `(product_id, product_name, supplier_id)`  
+- **Suppliers:** `(supplier_id, supplier_name)`
+
+---
+
+#### **4. What is the difference between WHERE and HAVING clauses?**  
+**Answer:**  
+
+| **WHERE**                       | **HAVING**                          |
+|----------------------------------|--------------------------------------|
+| Filters rows before grouping.    | Filters groups after aggregation.   |
+| Works on individual rows.        | Works on aggregate functions.       |
+
+**Example:**  
+```sql
+SELECT department, COUNT(*) 
+FROM employees 
+WHERE salary > 5000         -- Filter individual rows
+GROUP BY department
+HAVING COUNT(*) > 10;       -- Filter grouped results
+```
+
+---
+
+#### **5. How do you handle deadlocks in a database system?**  
+**Answer:**  
+- **Detect Deadlocks:** Use database logs or monitoring tools.  
+- **Prevent Deadlocks:**  
+  - Use consistent locking order (e.g., Table A → Table B).  
+  - Use shorter transactions to minimize contention.  
+  - Use lower isolation levels if acceptable.  
+- **Resolve Deadlocks:**  
+  - Database automatically picks a victim transaction and rolls it back.  
+  - Handle errors with retry logic in the application.  
+
+**Example:**  
+
+```plaintext
+Process 1: Locks Table A → Waits for Table B  
+Process 2: Locks Table B → Waits for Table A  
+
+Solution: Ensure both processes lock tables in the same order.
+```
+---
+
+
+A **deadlock** happens when two or more processes (or transactions) wait indefinitely for each other to release a resource, preventing further progress.
+
+---
+
+### **Simple Example of a Deadlock:**
+
+#### Scenario:  
+Two processes need to access **two shared tables** (Table A and Table B) to complete their tasks.
+
+1. **Process 1**:
+   - Locks **Table A**.
+   - Tries to lock **Table B** (but it's already locked by Process 2).
+
+2. **Process 2**:
+   - Locks **Table B**.
+   - Tries to lock **Table A** (but it's already locked by Process 1).
+
+**Result:** Both processes are waiting for the other to release its lock. Neither can proceed, creating a deadlock.
+
+---
+
+### **Visual Representation:**
+
+```plaintext
+    Process 1                Process 2
+    -----------              -----------
+    Lock Table A             Lock Table B
+    Wait for Table B   <-->  Wait for Table A
+```
+
+Both processes are stuck, forming a "circular wait."
+
+---
+
+### **How to Prevent Deadlocks:**
+1. **Consistent Lock Order:** Always lock tables in the same order (e.g., Table A first, then Table B).
+2. **Timeouts:** Set a timeout for locks so transactions don't wait forever.
+3. **Smaller Transactions:** Keep transactions short to reduce the likelihood of conflicts.
+
+---
+
+### **Node.js Questions**
+
+---
+
+#### **1. Explain the Event Loop in Node.js**  
+**Answer:**  
+The **Event Loop** is a mechanism in Node.js that handles non-blocking I/O operations by offloading tasks to the operating system or worker threads and processing them asynchronously.  
+- **Phases in the Event Loop:**  
+  1. **Timers:** Executes `setTimeout` and `setInterval` callbacks.  
+  2. **Pending Callbacks:** Handles I/O callbacks deferred from the previous loop.  
+  3. **Idle/Prepare:** Internal phase used by Node.js.  
+  4. **Poll:** Retrieves new I/O events and executes callbacks.  
+  5. **Check:** Executes `setImmediate` callbacks.  
+  6. **Close Callbacks:** Executes `close` event callbacks like `socket.on('close')`.
+
+```plaintext
+Timers → Pending Callbacks → Poll → Check → Close Callbacks
+```
+
+---
+
+#### **2. How does Node.js handle child processes?**  
+**Answer:**  
+Node.js provides the `child_process` module to create and manage child processes. These processes run independently and can communicate with the parent process via messaging or streams.  
+
+- **Key Methods:**
+  - `spawn`: Starts a new process for streaming data.
+  - `exec`: Executes a command and buffers the output.
+  - `fork`: Spawns a child process for Node.js scripts, with IPC (Inter-Process Communication).
+
+**Example: Fork a Child Process:**
+```javascript
+const { fork } = require('child_process');
+const child = fork('./child.js');
+
+// Communicate with child
+child.send({ hello: 'world' });
+child.on('message', (msg) => console.log('Message from child:', msg));
+```
+
+---
+
+#### **3. What are Streams in Node.js and how do they work?**  
+**Answer:**  
+Streams are objects in Node.js for handling continuous data flows efficiently. They use an **event-driven** approach, allowing data to be processed in chunks instead of loading everything into memory.  
+
+- **Types of Streams:**
+  1. **Readable:** Read data (e.g., file streams, HTTP requests).
+  2. **Writable:** Write data (e.g., HTTP responses, file writes).
+  3. **Duplex:** Both readable and writable (e.g., sockets).
+  4. **Transform:** A duplex stream that modifies data (e.g., compression).  
+
+**Example: Readable Stream:**
+```javascript
+const fs = require('fs');
+const stream = fs.createReadStream('file.txt', { encoding: 'utf8' });
+stream.on('data', chunk => console.log('Chunk:', chunk));
+```
+
+---
+
+#### **4. Explain the difference between process.nextTick() and setImmediate()**  
+**Answer:**  
+
+| **`process.nextTick`**                   | **`setImmediate`**                 |
+|------------------------------------------|-------------------------------------|
+| Executes callbacks **before** the Event Loop continues to the next phase. | Executes callbacks in the **Check phase** of the Event Loop. |
+| Higher priority than `setImmediate`.     | Lower priority compared to `process.nextTick`. |
+| Used for deferring execution of code during the current phase. | Used for executing code **after** I/O events are processed. |
+
+**Example:**
+```javascript
+process.nextTick(() => console.log('Next Tick'));
+setImmediate(() => console.log('Immediate'));
+
+// Output: 
+// Next Tick
+// Immediate
+```
+
+---
+
+#### **5. How does clustering work in Node.js?**  
+**Answer:**  
+Clustering allows Node.js to utilize multiple CPU cores by creating a master process that spawns worker processes to share the workload.
+
+- **Cluster Module:**
+  - The `cluster` module creates workers that handle incoming requests independently.
+  - The master process listens for requests and distributes them to workers.
+
+**Example:**
+```javascript
+const cluster = require('cluster');
+const http = require('http');
+
+if (cluster.isMaster) {
+  // Fork workers
+  const numCPUs = require('os').cpus().length;
+  for (let i = 0; i < numCPUs; i++) cluster.fork();
+  
+  cluster.on('exit', (worker) => console.log(`Worker ${worker.process.pid} died`));
+} else {
+  http.createServer((req, res) => {
+    res.writeHead(200);
+    res.end('Hello World!');
+  }).listen(8000);
+}
+```
+
+- **How it Works:**  
+  - **Master Process:** Manages the lifecycle of workers.
+  - **Worker Processes:** Handle client requests independently.  
+  - Improves scalability by utilizing all CPU cores efficiently.
+  ---
+  
 
 4. ReactJS (Mid-Advanced):
 - Explain the virtual DOM and its benefits
