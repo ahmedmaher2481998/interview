@@ -484,12 +484,98 @@ if (cluster.isMaster) {
   ---
   
 
-4. ReactJS (Mid-Advanced):
-- Explain the virtual DOM and its benefits
-- What are React hooks? Explain useCallback and useMemo
-- How does React fiber architecture work?
-- Explain the concept of lifting state up in React
-- What are Higher Order Components and when should you use them?
+### **ReactJS Questions**
+
+---
+
+#### **1. Explain the Virtual DOM and its Benefits**  
+**Answer:**  
+The **Virtual DOM** is an in-memory representation of the real DOM. React updates the Virtual DOM first, then efficiently reconciles the changes with the actual DOM using a process called **diffing**.
+
+**Benefits:**
+- **Efficiency:** Minimizes direct DOM manipulation.
+- **Performance:** Updates only the changed parts instead of re-rendering the whole DOM.
+- **Cross-platform:** Works on browsers and other platforms like React Native.
+
+---
+
+#### **2. What are React Hooks? Explain `useCallback` and `useMemo`**  
+**Answer:**  
+React Hooks allow you to use state and lifecycle features in functional components.  
+
+- **`useCallback`**: Memorizes a callback function to prevent unnecessary re-creations on re-renders.  
+  ```javascript
+  const memoizedCallback = useCallback(() => {
+    doSomething(dep);
+  }, [dep]);
+  ```
+
+- **`useMemo`**: Memorizes the result of a computation to avoid expensive recalculations.  
+  ```javascript
+  const memoizedValue = useMemo(() => computeExpensiveValue(dep), [dep]);
+  ```
+
+**When to Use:**
+- Use `useCallback` for functions passed as props to child components.
+- Use `useMemo` for expensive calculations or derived values.
+
+---
+
+#### **3. How Does React Fiber Architecture Work?**  
+**Answer:**  
+React Fiber is the reimplementation of React’s reconciliation algorithm to improve rendering performance by breaking rendering work into **small units** that can be paused and resumed.
+
+**Key Features:**
+- **Time-slicing:** Prioritizes rendering based on urgency (e.g., animations over background tasks).
+- **Concurrency:** Allows interruptible updates, enabling smooth UI interactions.
+- **Phases:**
+  1. **Render Phase:** Builds a "work-in-progress" tree (can be paused).
+  2. **Commit Phase:** Applies changes to the DOM (synchronous).
+
+---
+
+#### **4. Explain the Concept of Lifting State Up in React**  
+**Answer:**  
+**Lifting state up** means moving shared state to the closest common ancestor of components that need it.
+
+**Scenario:**  
+Two sibling components need access to the same data. Instead of duplicating state, move it to their parent and pass it down as props.
+
+**Example:**
+```javascript
+function Parent() {
+  const [value, setValue] = useState("");
+
+  return (
+    <>
+      <Input value={value} onChange={setValue} />
+      <Display value={value} />
+    </>
+  );
+}
+```
+
+---
+
+#### **5. What are Higher Order Components (HOCs) and When Should You Use Them?**  
+**Answer:**  
+An **HOC** is a function that takes a component and returns a new component with additional functionality.  
+**Example:**
+```javascript
+function withLogging(WrappedComponent) {
+  return function EnhancedComponent(props) {
+    useEffect(() => console.log('Component Rendered'));
+    return <WrappedComponent {...props} />;
+  };
+}
+```
+
+**Use Cases:**
+- Reusing logic across multiple components (e.g., authentication, logging).  
+- Enhancing component functionality without modifying the original.  
+
+**Note:** React now favors **hooks** over HOCs for code reuse.
+---
 
 5. Docker (Mid-Advanced):
 - What is Docker containerization and how is it different from virtualization?
