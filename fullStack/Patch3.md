@@ -694,6 +694,666 @@ class ServiceRegistry {
   }
 }
 ```
-
-The guide provides comprehensive insights into advanced SQL techniques and microservices architectural patterns, offering detailed explanations, implementation strategies, and conceptual diagrams.
 ---
+
+
+# Advanced TypeScript Features
+
+## Conditional Types
+
+**Concept**: Conditional types allow dynamic type generation based on type relationships.
+
+```ascii
++-------------------+
+| Condition Type   |
+|  Input Type A    |
+|  Input Type B    |
+|        ↓         |
+| Resulting Type   |
++-------------------+
+```
+
+**Implementation**:
+```typescript
+type IsString<T> = T extends string ? true : false;
+type Result = IsString<"hello">; // true
+```
+
+## Mapped Types
+
+**Concept**: Transform existing types by mapping over their properties.
+
+```ascii
++-------------------+
+| Original Type    |
+|  prop1: string   |
+|  prop2: number   |
+|        ↓         |
+| Transformed Type |
+|  prop1: boolean  |
+|  prop2: boolean  |
++-------------------+
+```
+
+**Implementation**:
+```typescript
+type Nullable<T> = { [P in keyof T]: T[P] | null };
+```
+
+## Infer Keyword
+
+**Concept**: Dynamically extract and infer types within conditional types.
+
+```ascii
++-------------------+
+| Type Extraction  |
+|  Function Type   |
+|    Inference     |
+|        ↓         |
+| Extracted Return |
++-------------------+
+```
+
+**Implementation**:
+```typescript
+type ReturnTypeExtractor<T> = 
+  T extends (...args: any[]) => infer R ? R : never;
+```
+
+## Generic Constraints
+
+**Concept**: Limit generic types to specific structures or behaviors.
+
+```ascii
++-------------------+
+| Generic Type T   |
+|    Constraints   |
+|   Must Contain   |
+|   Length/Name    |
++-------------------+
+```
+
+**Implementation**:
+```typescript
+interface Lengthwise { length: number; }
+function getLength<T extends Lengthwise>(arg: T): number {
+  return arg.length;
+}
+```
+
+## Utility Types
+
+**Concept**: Built-in type transformations for common type manipulations.
+
+```ascii
++-------------------+
+| Original Type    |
+|  prop1: string   |
+|  prop2: number   |
+|        ↓         |
+| Transformed Type |
+|  prop1?: string  |
+|  prop2?: number  |
++-------------------+
+```
+
+**Implementation**:
+```typescript
+type User = { name: string; age: number };
+type PartialUser = Partial<User>;
+type RequiredUser = Required<User>;
+```
+
+## Async Type Inference
+
+**Concept**: Inferring types in asynchronous functions and promises.
+
+```ascii
++-------------------+
+| Async Function   |
+|    Promise       |
+|  Type Inference  |
+|        ↓         |
+| Resolved Type    |
++-------------------+
+```
+
+**Implementation**:
+```typescript
+async function fetchData(): Promise<string> {
+  return "data";
+}
+```
+
+## Decorators
+
+**Concept**: Modify or enhance class, method, or property behavior.
+
+```ascii
++-------------------+
+| Class/Method     |
+|    Decorator     |
+|  Transformation  |
+|        ↓         |
+| Enhanced Behavior|
++-------------------+
+```
+
+**Implementation**:
+```typescript
+function log(target: any, key: string, descriptor: PropertyDescriptor) {
+  const original = descriptor.value;
+  descriptor.value = function(...args: any[]) {
+    console.log(`Calling ${key}`);
+    return original.apply(this, args);
+  };
+}
+```
+
+## Branded Types
+
+**Concept**: Create type-safe primitive wrappers to prevent incorrect usage.
+
+```ascii
++-------------------+
+| Primitive Type   |
+|   With Unique    |
+|    Brand Tag     |
+|        ↓         |
+| Type-Safe Wrapper|
++-------------------+
+```
+
+**Implementation**:
+```typescript
+type Brand<K, T> = K & { __brand: T };
+type UserId = Brand<number, 'UserId'>;
+```
+
+# System Design Concepts
+
+## URL Shortener Service
+
+**Architecture**:
+```ascii
++-------------+     +-------------+     +-------------+
+|   Client    | --> |  Web Server | --> |  Database   |
++-------------+     +-------------+     +-------------+
+       ↑                                     |
+       |                                     |
+       +-------------------------------------+
+```
+
+**Key Components**:
+- Unique ID generation
+- URL mapping storage
+- Redirection mechanism
+
+## Chat Application
+
+**Architecture**:
+```ascii
++-------------+     +-------------+     +-------------+
+|   Client A  | <-> |  WebSocket  | <-> |   Server    |
++-------------+     |   Service   |     +-------------+
++-------------+     +-------------+     |  Database   |
+|   Client B  | <->                     +-------------+
++-------------+
+```
+
+**Key Features**:
+- Real-time messaging
+- User authentication
+- Message persistence
+
+## Social Media Feed
+
+**Architecture**:
+```ascii
++-------------+     +-------------+     +-------------+
+|   Client    | --> |  Web Server | --> |  Database   |
++-------------+     +-------------+     +-------------+
+                    |   Caching   |
+                    +-------------+
+```
+
+**Design Principles**:
+- Horizontal scaling
+- Content aggregation
+- Personalized feed generation
+
+## File Sharing Service
+
+**Architecture**:
+```ascii
++-------------+     +-------------+     +-------------+
+|   Client    | --> |  Upload SVC | --> |   Storage   |
++-------------+     +-------------+     +-------------+
+       ↑                                     |
+       |                                     |
+       +-------------------------------------+
+```
+
+**Key Components**:
+- File metadata tracking
+- Access control
+- Distributed storage
+
+## E-Commerce Product Catalog
+
+**Architecture**:
+```ascii
++-------------+     +-------------+     +-------------+
+|   Client    | --> |  Web Server | --> |  Database   |
++-------------+     +-------------+     +-------------+
+                    |   Caching   |
+                    +-------------+
+```
+
+**Design Considerations**:
+- Product indexing
+- Search functionality
+- Dynamic pricing
+
+## Caching System
+
+**Architecture**:
+```ascii
++-------------+     +-------------+     +-------------+
+|   Client    | --> |   Cache SVC | --> |  Database   |
++-------------+     +-------------+     +-------------+
+```
+
+**Implementation Strategy**:
+- LRU (Least Recently Used) eviction
+- Time-based expiration
+- Cache coherence
+
+## Notification Service
+
+**Architecture**:
+```ascii
++-------------+     +-------------+     +-------------+
+|   Event     | --> | Notification| --> |   Client    |
+|   Source    |     |   Service   |     +-------------+
++-------------+     +-------------+
+```
+
+**Key Features**:
+- Multi-channel delivery
+- User preference management
+- Rate limiting
+
+## Authentication System
+
+**Architecture**:
+```ascii
++-------------+     +-------------+     +-------------+
+|   Client    | --> | Auth Server | --> |  Database   |
++-------------+     +-------------+     +-------------+
+```
+
+**Security Considerations**:
+- Password hashing
+- Token-based authentication
+- Multi-factor support
+
+---
+
+
+# Integration and Deployment Best Practices
+
+## 1. Zero-Downtime Database Migrations
+
+### In-Depth Explanation
+Zero-downtime migrations require careful orchestration to maintain service availability while updating database schemas. This involves multiple stages and backward compatibility considerations.
+
+```ascii
+Phase 1: Preparation         Phase 2: Migration         Phase 3: Cleanup
++------------------+        +------------------+        +------------------+
+|  Deploy New Code |   →    |  Migrate Data    |   →    |  Remove Old Code |
+|  (Dual Schema)   |        |  (Background)    |        |  & Schema        |
++------------------+        +------------------+        +------------------+
+```
+
+### Implementation Strategy:
+
+1. **Backward Compatible Changes**:
+```sql
+-- Instead of direct column removal
+ALTER TABLE users 
+ADD COLUMN email_new VARCHAR(255);
+
+-- Copy data
+UPDATE users 
+SET email_new = email;
+
+-- Later: Remove old column
+ALTER TABLE users 
+DROP COLUMN email;
+```
+
+2. **Database Version Control**:
+```yaml
+migrations/
+  ├── V1__initial_schema.sql
+  ├── V2__add_email_column.sql
+  └── V3__cleanup_old_columns.sql
+```
+
+3. **Rollback Strategy**:
+```sql
+-- Always include rollback scripts
+CREATE PROCEDURE RollbackMigration_V2()
+BEGIN
+  -- Restore previous state
+  ALTER TABLE users 
+  DROP COLUMN email_new;
+END;
+```
+
+## 2. Gradual Feature Rollouts
+
+### In-Depth Explanation
+Feature rollouts should be controlled and monitored to minimize risk and enable quick rollback if issues arise.
+
+```ascii
++------------------+     +------------------+     +------------------+
+|   Feature Flags  | →   | Canary Release   | →   | Full Rollout     |
+|   (Toggle)       |     | (% of Users)     |     | (All Users)      |
++------------------+     +------------------+     +------------------+
+```
+
+### Implementation Approaches:
+
+1. **Feature Flag Configuration**:
+```javascript
+const featureFlags = {
+  newUserInterface: {
+    enabled: true,
+    rolloutPercentage: 25,
+    whitelist: ['beta-testers'],
+    startDate: '2024-01-01'
+  }
+};
+```
+
+2. **Progressive Rollout Logic**:
+```javascript
+function shouldEnableFeature(userId, feature) {
+  // Check whitelist
+  if (feature.whitelist.includes(getUserGroup(userId))) return true;
+  
+  // Check rollout percentage
+  return calculateUserPercentile(userId) <= feature.rolloutPercentage;
+}
+```
+
+## 3. Environment-Specific Configuration
+
+### In-Depth Explanation
+Configuration management should support multiple environments while maintaining security and flexibility.
+
+```ascii
+Configuration Flow
++-------------+     +----------------+     +-------------+
+|   Dev       |     |   Staging     |     |   Prod      |
+| (.env.dev)  | →   | (.env.staging)| →   | (.env.prod) |
++-------------+     +----------------+     +-------------+
+       ↓                    ↓                    ↓
+   Local Vars         Vault Secrets        KMS Secrets
+```
+
+### Implementation Strategy:
+
+1. **Environment Configuration**:
+```javascript
+// config.js
+const config = {
+  database: {
+    host: process.env.DB_HOST,
+    port: process.env.DB_PORT,
+    credentials: loadSecrets('database')
+  },
+  features: loadFeatureFlags(process.env.ENVIRONMENT)
+};
+```
+
+2. **Secret Management**:
+```yaml
+# docker-compose.yml
+services:
+  app:
+    environment:
+      - NODE_ENV=${NODE_ENV}
+      - DB_HOST=${DB_HOST}
+    secrets:
+      - db_password
+      - api_key
+```
+
+## 4. API Documentation
+
+### In-Depth Explanation
+API documentation should be automated, accurate, and easily maintainable.
+
+```ascii
+Documentation Flow
++-------------+     +----------------+     +-------------+
+|   Code      |     |   Generator   |     |    Docs     |
+| Annotations | →   |   (Swagger)   | →   |   Portal    |
++-------------+     +----------------+     +-------------+
+```
+
+### Implementation Example:
+
+1. **OpenAPI Specification**:
+```yaml
+paths:
+  /users:
+    get:
+      summary: Retrieve users
+      parameters:
+        - name: limit
+          in: query
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: List of users
+```
+
+2. **Code Documentation**:
+```javascript
+/**
+ * @api {get} /users Get Users
+ * @apiName GetUsers
+ * @apiGroup User
+ * @apiParam {Number} limit Number of users to return
+ */
+async function getUsers(limit) {
+  // Implementation
+}
+```
+
+## 5. Monitoring and Alerting
+
+### In-Depth Explanation
+Comprehensive monitoring covers infrastructure, application performance, and business metrics.
+
+```ascii
+Monitoring Stack
++-------------+     +----------------+     +-------------+
+|  Metrics    |     |  Aggregation  |     |  Alerting   |
+| Collection  | →   |   & Analysis  | →   |  Rules      |
++-------------+     +----------------+     +-------------+
+```
+
+### Implementation Approach:
+
+1. **Metric Collection**:
+```javascript
+const metrics = {
+  requestDuration: new Histogram({
+    name: 'http_request_duration_seconds',
+    help: 'HTTP request duration in seconds',
+    labelNames: ['method', 'route', 'status']
+  })
+};
+```
+
+2. **Alert Configuration**:
+```yaml
+alerts:
+  - name: high_error_rate
+    condition: error_rate > 5%
+    duration: 5m
+    severity: critical
+    channels: ['slack', 'pagerduty']
+```
+
+## 6. Error Tracking and Debugging
+
+### In-Depth Explanation
+Effective error tracking combines logging, tracing, and context collection.
+
+```ascii
+Error Handling Flow
++-------------+     +----------------+     +-------------+
+|   Error     |     |    Logging    |     |   Alert     |
+| Detection   | →   |    & Tracing  | →   |   Team      |
++-------------+     +----------------+     +-------------+
+```
+
+### Implementation Strategy:
+
+1. **Structured Logging**:
+```javascript
+const logger = {
+  error: (err, context) => {
+    console.error({
+      timestamp: new Date(),
+      error: err.message,
+      stack: err.stack,
+      context,
+      severity: 'ERROR'
+    });
+  }
+};
+```
+
+2. **Error Tracking Integration**:
+```javascript
+class ErrorTracker {
+  captureError(error, context) {
+    // Capture error details
+    const errorReport = {
+      message: error.message,
+      stack: error.stack,
+      userId: context.userId,
+      sessionId: context.sessionId,
+      environment: process.env.NODE_ENV
+    };
+    
+    // Send to error tracking service
+    this.sendToErrorService(errorReport);
+  }
+}
+```
+
+## 7. Local Development Dependencies
+
+### In-Depth Explanation
+Local development should mirror production while remaining lightweight and manageable.
+
+```ascii
+Local Dev Environment
++-------------+     +----------------+     +-------------+
+|   Service   |     |    Docker     |     |   Mocked    |
+|   Code      | →   |    Compose    | →   |   Services  |
++-------------+     +----------------+     +-------------+
+```
+
+### Implementation Example:
+
+1. **Docker Compose Setup**:
+```yaml
+version: '3'
+services:
+  app:
+    build: .
+    volumes:
+      - .:/app
+    depends_on:
+      - db
+      - redis
+  
+  db:
+    image: postgres:13
+    environment:
+      POSTGRES_DB: myapp_dev
+```
+
+2. **Service Mocking**:
+```javascript
+const mockServices = {
+  payment: {
+    process: async (amount) => ({
+      success: true,
+      transactionId: 'mock_tx_' + Date.now()
+    })
+  }
+};
+```
+
+## 8. Testing Microservices
+
+### In-Depth Explanation
+Testing microservices requires a combination of unit, integration, and end-to-end tests.
+
+```ascii
+Testing Pyramid
+      /\
+     /E2E\
+    /─────\
+   /  Int  \
+  /─────────\
+ /   Unit    \
+/─────────────\
+```
+
+### Implementation Strategy:
+
+1. **Unit Testing**:
+```javascript
+describe('UserService', () => {
+  it('should create user', async () => {
+    const service = new UserService(mockDb);
+    const user = await service.createUser({
+      name: 'Test User',
+      email: 'test@example.com'
+    });
+    expect(user).toBeDefined();
+  });
+});
+```
+
+2. **Integration Testing**:
+```javascript
+describe('UserAPI', () => {
+  beforeAll(async () => {
+    await startTestServices();
+  });
+
+  it('should handle user creation flow', async () => {
+    const response = await request(app)
+      .post('/api/users')
+      .send({
+        name: 'Test User',
+        email: 'test@example.com'
+      });
+    
+    expect(response.status).toBe(201);
+  });
+});
+```
