@@ -1327,6 +1327,3 @@ ASCII Query Optimization Flow:
 ```plaintext
 [Query] --> [Execution Plan] --> [Indexes Applied] --> [Optimized Result]
 ```
-
-
-
