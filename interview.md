@@ -61,10 +61,6 @@ Here's an updated quick reference guide:
 
 - [General mcq questions react-angular-node-DBS-OOP](./Technical Interview MCQ.md).
 
-# Vue 3 and Nuxt 3 InterView Preparation Guide
-
-# 
-
 ## Final Tips
 
 1. Practice explaining these concepts out loud, as if you're describing them to an interviewer.

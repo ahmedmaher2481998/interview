@@ -181,7 +181,14 @@ Copy code
   
   Copy code
   
-  ``function RegularFunction() {   this.name = "Ahmed";   setTimeout(function () {     console.log(this.name); // undefined, as `this` refers to the global object   }, 1000); }  function ArrowFunction() {   this.name = "Ahmed";   setTimeout(() => {     console.log(this.name); // "Ahmed", arrow functions inherit `this`   }, 1000); }``
+  ```javascript 
+  function RegularFunction() {
+     this.name = "Ahmed";
+     setTimeout(function () {
+          console.log(this.name);
+           // undefined, as `this` refers to the global object
+     }, 1000); } 
+      function ArrowFunction() {   this.name = "Ahmed";   setTimeout(() => {     console.log(this.name); // "Ahmed", arrow functions inherit `this`   }, 1000); }``
 
 - **Q: How do you use destructuring assignments in JavaScript?**
   
